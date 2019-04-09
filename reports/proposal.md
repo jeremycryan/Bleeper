@@ -5,8 +5,6 @@ A simple synthesizer made with C and Arduino, as part of Software Systems at Oli
 
 ## Project Goal
 
-*1) What is the goal of your project; for example, what do you plan to make, and what should it do?  Identify a lower bound you are confident you can achieve and a stretch goal that is more ambitious.*
-
 For this project, I plan to create a simple audio synthesizer in C using an Arduino. At minimum, it should be able to do the following:
 
 - Simulate analog waveforms with an R2R ladder with at least 8 bits of resolution
@@ -25,23 +23,17 @@ As stretch goals, I could build on this lower bound in one or more of the follow
 
 ## Learning Goals
 
-*2) What are your learning goals; that is, what do you intend to achieve by working on this project?*
-
 For this project, I hope to get better at designing robust structures and frameworks that give better high-level control of the program. In the last project, while I had some opportunity to do this, it felt more results-focused, and some of the structure fell to the wayside.
 
 Additionally, since I worked a lot with building off an external library (GTK) last project, I'll use this project as an opportunity to develop my own framework from the ground up.
 
 ## Getting Started
 
-*3) What do you need to get started?  Have you found the resources you need, do you have a plan to find them, or do you need help?*
-
 For a number of reasons, I'm getting started on this project a little later than the rest of the class, but I think I'm ready to hit the ground running right away. I have worked a little with audio synthesis in the past, and am looking to use this project more as an opportunity to develop my C programming skills than to explore something completely new conceptually.
 
 I don't currently plan on using any outside libraries that I need to research; that being said, it's possible I'll end up using GLib if I decide that it would be worthwhile to start with some of their data structures.
 
 ## First Steps
-
-*4) What are your first steps?  Describe at least three concrete tasks that you can do immediately, and identify which member of the team will do them.  For each one, what is the "definition of done"; that is, what will you produce to demonstrate that the task is done?*
 
 ### High-Level Structure
 
