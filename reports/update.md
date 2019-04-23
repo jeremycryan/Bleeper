@@ -43,6 +43,8 @@ So far, I have created some structures for use in synthesis:
 
 - The **WaveNode** and **ToneNode** objects act as containers for their respective data types to put in linked lists. There are functions to update each node of a list, in the case of ToneNodes.
 
+Between these structures, I am able to generate tones at arbitrary frequency and 8-bit amplitude resolution, apply basic ASDR enveloping, and write the data to files. This fulfills about half of my MVP requirements.
+
 Additionally, I've structured the code into multiple files, made a makefile and gitignore, and created a test bench that lets me store data for testing.
 
 ## Next Steps
