@@ -1,0 +1,4 @@
+# Exclude object files and executable
+src/*.o
+src/data
+src/bleep
