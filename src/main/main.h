@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
-
+#include <Arduino.h>
 
 // Booleans are nice
 #define TRUE 1
@@ -14,8 +14,25 @@
 // Define some types of waves
 #define SINE 0
 #define SQUARE 1
-#define PI 3.14159265358979323846
 
+/* Structure for generating ADSR envelopes in real time.
+
+   A:   (double) attack time, in seconds
+   D:   (double) decay time, in seconds
+   S:   (double) sustain time, in seconds
+   R:   (double) release time, in seconds
+   sustain_amp: (uint8_t) amplitude of envelope during sustain phase
+
+*/
+typedef struct EnvelopeStruct{
+
+  double A;
+  double S;
+  double D;
+  double R;
+  uint8_t sustain_amp;
+
+} Envelope;
 
 /* Structure for an audio waveform.
 
@@ -27,11 +44,10 @@
 */
 typedef struct WaveStruct {
   int8_t*    data;
-  uint8_t*   envelope;
+  Envelope*   envelope;
   uint32_t   length;
   uint32_t   rate;
 } Wave;
-
 
 /* Structure for a tone generator for a single waveform.
 
@@ -51,7 +67,7 @@ typedef struct ToneStruct {
   double     frequency;
   double     phase;
   double     phase_sweep;
-  uint8_t*   envelope;
+  Envelope*  envelope;
   uint32_t   length;
   uint32_t   rate;
 } Tone;
@@ -86,7 +102,7 @@ void free_wave(Wave* wave_ptr);
 Tone* make_tone(double shape, double frequency, double phase_sweep);
 void free_tone(Tone* tone_ptr);
 int8_t get_value(Tone* tone_ptr, double time);
-void add_envelope(Tone* tone_ptr, uint8_t* envelope, uint32_t length);
+void add_envelope(Tone* tone_ptr, Envelope* envelope);
 
 
 // Functions for manipulating tone linked lists
@@ -99,5 +115,10 @@ ToneNode* delete_completed(ToneNode* head);
 
 
 // Functions for generating envelope arrays
-uint8_t* generate_envelope_asdr(double A, double S, double D, double R,
-                                uint8_t sustain_amp);
+Envelope* make_envelope(double A, double D, double S, double R, uint8_t sustain_amp);
+uint8_t get_env_val(Envelope* e, double t);
+void free_envelope(Envelope*);
+
+// Functions for interfacing with the Arduino hardware
+void initialize_pins();
+void set_speaker(uint8_t val);

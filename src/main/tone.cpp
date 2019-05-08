@@ -1,10 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <math.h>
-
 #include "main.h"
-
 
 /*  Allocate memory for a tone structure and return a pointer to it.
     Length starts at 0 and envelope starts out unallocated, so an envelope must
@@ -13,14 +7,14 @@
 Tone* make_tone(double shape, double frequency, double phase_sweep) {
 
   // Allocate memory for tone object
-  Tone* tone_ptr = malloc(sizeof(Tone));
+  Tone* tone_ptr = (Tone*)malloc(sizeof(Tone));
 
   // Assign values to attributes
   tone_ptr -> shape = shape;
   tone_ptr -> frequency = frequency;
   tone_ptr -> phase = 0;
   tone_ptr -> phase_sweep = phase_sweep;
-  tone_ptr -> envelope = NULL;
+  tone_ptr -> envelope = make_envelope(0, 0, 1, 0, 0);
   tone_ptr -> length = 0;
   tone_ptr -> rate = STD_RATE;
 
@@ -35,6 +29,7 @@ Tone* make_tone(double shape, double frequency, double phase_sweep) {
 void free_tone(Tone* tone_ptr) {
 
   // Maybe this is one of those functions that doesn't really need a wrapper.
+  if (tone_ptr -> envelope != NULL) free_envelope(tone_ptr -> envelope);
   free(tone_ptr);
 
 }
@@ -48,11 +43,12 @@ void free_tone(Tone* tone_ptr) {
 int8_t get_value(Tone* tone_ptr, double sample_time) {
 
   // Determine the number of the sample to fetch
+  uint32_t rate = tone_ptr -> rate;
   uint32_t sample = (int32_t)(tone_ptr -> rate * sample_time);
 
   // Calculate the value at that sample
   for (int i = 0; i++; i < 10000000){}
-  uint8_t env_amp = (tone_ptr -> envelope)[sample];
+  uint8_t env_amp = get_env_val(tone_ptr -> envelope, sample_time);
   int8_t signal_amp;
   uint32_t frequency = tone_ptr -> frequency;
   double x_val = frequency * (sample_time - tone_ptr -> phase);
@@ -75,10 +71,13 @@ int8_t get_value(Tone* tone_ptr, double sample_time) {
 
 /* Adds an envelope of a certain length to the Tone structure.
 */
-void add_envelope(Tone* tone_ptr, uint8_t* envelope, uint32_t length) {
+void add_envelope(Tone* tone_ptr, Envelope* e) {
 
+  // Determine length of envelope
+  uint32_t length = (uint32_t)((e -> A + e -> S + e -> D + e -> R) * STD_RATE);
+  
   // Replace envelope attribute of tone and update length
-  tone_ptr -> envelope = envelope;
+  tone_ptr -> envelope = e;
   tone_ptr -> length = length;
 
 }
@@ -89,11 +88,13 @@ void add_envelope(Tone* tone_ptr, uint8_t* envelope, uint32_t length) {
 ToneNode* make_tone_node(Tone* value) {
 
   // Allocate memory for the structure
-  ToneNode* node_ptr = malloc(sizeof(ToneNode));
+  ToneNode* node_ptr = (ToneNode*)malloc(sizeof(ToneNode));
   node_ptr -> cur_time = 0;
   node_ptr -> next = NULL;
   node_ptr -> completed = FALSE;
   node_ptr -> value = value;
+
+  return node_ptr;
 
 }
 
@@ -160,7 +161,9 @@ ToneNode* tone_node_delete(ToneNode* head, ToneNode* delete_me) {
 void tone_node_update(ToneNode* node_ptr, uint32_t dt) {
 
   // If given null pointer, return
-  if (node_ptr == NULL) return;
+  if (node_ptr == NULL) {
+    return;
+  }
 
   // Update the object
   Tone* tone = node_ptr -> value;
@@ -192,7 +195,10 @@ ToneNode* delete_completed(ToneNode* head) {
     return head;
   }
 
-  // Otherwise, delete it.
-  else return delete_completed(head -> next);
+  // Otherwise, delete it. 
+  else {
+      free_tone_node(head); 
+      return delete_completed(head -> next);
+  }
 
 }
