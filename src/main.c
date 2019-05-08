@@ -10,8 +10,8 @@ int main() {
   uint32_t last_freq = 440;
 
   Tone* tone = make_tone(SINE, 440, 0);
-  uint8_t* envelope = generate_envelope_asdr(0.05, 0.1, 0.5, 0.1, 50);
-  add_envelope(tone, envelope, (int)(STD_RATE * 0.75));
+  Envelope* envelope = make_envelope(0.05, 0.1, 0.5, 0.1, 50);
+  add_envelope(tone, envelope);
 
   ToneNode* tone_head = make_tone_node(tone);
   ToneNode* new_node;
@@ -37,8 +37,8 @@ int main() {
     if (t > tones_created) {
       last_freq *= 1.25;
       tone = make_tone(SINE, last_freq, 0);
-      envelope = generate_envelope_asdr(0.05, 0.1, 0.5, 0.1, 50);
-      add_envelope(tone, envelope, (int)(STD_RATE*0.75));
+      envelope = make_envelope(0.05, 0.1, 0.5, 0.1, 50);
+      add_envelope(tone, envelope);
       new_node = make_tone_node(tone);
       tone_head = tone_node_append(tone_head, new_node);
       tones_created++;

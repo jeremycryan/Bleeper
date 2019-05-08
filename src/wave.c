@@ -12,14 +12,10 @@ Wave* make_wave(uint32_t length) {
   // Allocate memory for data and wave object
   Wave* wave_ptr = malloc(sizeof(Wave));
   int8_t* data_ptr = calloc(length, sizeof(int8_t));
-  uint8_t* envelope = malloc(sizeof(uint8_t) * length);
-
-  // Initialize envelope to start at all maximum values
-  for (int i = 0; i < length; i++) envelope[i] = 255;
 
   // Assign values to attributes
   wave_ptr -> data = data_ptr;
-  wave_ptr -> envelope = envelope;
+  wave_ptr -> envelope = NULL;
   wave_ptr -> length = length;
   wave_ptr -> rate = 44100;
 
