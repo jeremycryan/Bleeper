@@ -23,6 +23,7 @@ As stretch goals, I could build on this lower bound in one or more of the follow
 
 - Use buttons in hardware as inputs to generate notes real time
 
+
 ## Learning Goals
 
 For this project, I hope to get better at designing robust structures and frameworks that give better high-level control of the program. In the last project, while I had some opportunity to do this, it felt more results-focused, and some of the structure fell to the wayside.
@@ -30,6 +31,29 @@ For this project, I hope to get better at designing robust structures and framew
 Additionally, since I worked a lot with building off an external library (GTK) last project, I'll use this project as an opportunity to develop my own framework from the ground up.
 
 At the time of writing this final report, I believe that I have achieved my learning goals pretty well. My project uses reasonably complex structures, with several helper functions, and I've had to think deliberately about how to organize my code and files.
+
+## Audio Fundamentals
+
+In order to explain some of the work I did for this project, it's worthwhile to cover some basics of audio generation.
+
+### Bit Depth and Sample Rate
+
+The size and quality of an uncompressed audio file largely hinges on two attributes: bit depth and sample rate. Bit depth relates to how many bits make up a single symbol in the waveform; sample rate relates to how many of these symbols occur during a second of playback.
+
+Get either of these values too low, and you will start to hear weird audio artifacts (like when the data rate drops in a Skype call and your caller starts to sound like a robot). Get them too high, and you're using an unnecessary amount of data. For this project, I opted to generate an 8-bit waveform, and aim to get the sample rate as high as possible (preferably more than 40kHz).
+
+### Enveloping
+
+One of the more important aspects for influencing a synthesized sound is its envelope. An envelope essentially acts as an amplitude multiplier for your waveform, allowing it to fade in and out, or exhibit more complex behavior. For this paroject, I decided to implement an ADSR envelope, which consists of four phases:
+
+![Image of an ADSR envelope](https://raw.githubusercontent.com/jeremycryan/Bleeper/master/images/enveloping.png)
+
+- **Attack**: The sample fades in at a constant rate.
+- **Decay**: The sample fades to a lower level at a constant rate.
+- **Sustain**: The sample maintains that volume for a period of time.
+- **Release**: The sample fades to silence at a constant rate.
+
+Although fairly simple, the ADSR envelope is actually pretty good at adding variety to the sounds of a software synthesizer.
 
 ## Structures and Implementation
 
@@ -101,23 +125,6 @@ Then play the file in one of the following ways:
 - Sample rate 44100 Hz
 
 **Play the WAV files**: Alternatively, you can just open one of the WAV files in the output directory that I generated after typing most of this section.
-
-
-## Next Steps
-
-### Hardware Demo
-
-One major part of the project I've overlooked until now is getting the hardware up and running. I don't anticipate many pitfalls, but it will still probably take some time to assemble and test the Arduino and DAC. It's probably in my best interests to get some actual bleeps as soon as possible.
-
-### Envelope Object
-
-I've been passing around integer arrays to serve as envelopes for my various structures, but it has occurred to me that a more elegant solution would be to make a separate structure for envelopes. Instead of passing an array with a separate length argument, I could include relevant information in the structure and expand it later if necessary.
-
-This change should be fairly easy to implement. I'll also be on the lookout for other changes that make some of the interfacing between structures more elegant.
-
-### Abstraction
-
-One of the goals for this project was to interface with the synthesizer at a higher level --- for instance, by typing note names. Getting a neat wrapping around some of my lower-level structures to make this nice interface is a priority, especilally if I want to create reasonably complicated music on the final hardware.
 
 ## Links
 
