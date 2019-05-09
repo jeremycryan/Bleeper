@@ -23,6 +23,22 @@ Tone* make_tone(double shape, double frequency, double phase_sweep) {
 
 }
 
+// Prints a representation of a tone object to stdout.
+void print_tone(Tone* tone_ptr) {
+
+  printf("Tone object: ");
+
+  // Print shape
+  switch (tone_ptr -> shape) {
+    case SINE: printf("SINE "); break;
+    case SQUARE: printf("SQUARE "); break;
+  }
+
+  // Print frequency
+  printf("%fHz\n", tone_ptr -> frequency);
+
+}
+
 /* Frees a tone structure. The tone's envelope must be freed prior to this call,
    as multiple tones can share a single envelope pointer.
 */
@@ -53,6 +69,7 @@ int8_t get_value(Tone* tone_ptr, double sample_time) {
   int8_t signal_amp;
   uint32_t frequency = tone_ptr -> frequency;
   double x_val = frequency * (sample_time - tone_ptr -> phase);
+  double through;
 
   switch (tone_ptr -> shape) {
 
@@ -64,9 +81,45 @@ int8_t get_value(Tone* tone_ptr, double sample_time) {
       signal_amp = (fmod(x_val, 1.0) > 0.5) ? 127 : -128;
       break;
 
+    case TRIANGLE:
+      through = fmod(x_val + 0.25, 1.0);
+      signal_amp = (through <= 0.5) ? through * 510 - 127
+        : (1 - through) * 510 - 127;
+      break;
+
+    case SAWTOOTH:
+      through = fmod(x_val + 0.5, 1.0);
+      signal_amp = through * 254 - 127;
+      printf("%d\n", signal_amp);
+      break;
+
+    case NOISE:
+      signal_amp = rand()%254 - 127;
+      if (frequency == 0) signal_amp = 128;
+      break;
+
   }
 
   return env_amp * signal_amp / 256;
+
+}
+
+
+/* Gets the average of the first four ToneNodes in a list, and returns the value
+*/
+uint8_t get_list_value(ToneNode* head) {
+
+  uint8_t each[] = {128, 128, 128, 128};
+
+  // Get the value of each item in the list, up to the fourth
+  for (int i = 0; i < 4; i++) {
+    if (head == NULL) break;
+    each[i] = get_value(head -> value, head -> cur_time) + 128;
+    head = head -> next;
+  }
+
+  // Return their average
+  return each[0]/4 + each[1]/4 + each[2]/4 + each[3]/4;
 
 }
 
@@ -196,9 +249,10 @@ ToneNode* delete_completed(ToneNode* head) {
   }
 
   // Otherwise, delete it.
+  // TODO Fix memory leak if it becomes a problem
   else {
-      free_tone_node(head);
-      return delete_completed(head -> next);
+      ToneNode* next = head -> next;
+      return delete_completed(next);
   }
 
 }

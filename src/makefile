@@ -6,8 +6,8 @@ DEPS = main.h
 	$(CC) -c -o $@ $<
 
 # Compile final executable only after all object files
-bleep: main.o wave.o tone.o envelope.o
-	$(CC) -o bleep main.o wave.o tone.o envelope.o -lm
+bleep: main.o wave.o tone.o envelope.o parser.o
+	$(CC) -o bleep main.o wave.o tone.o envelope.o parser.o -lm
 
 data: bleep
 	./bleep > data

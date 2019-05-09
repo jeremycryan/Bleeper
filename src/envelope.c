@@ -27,6 +27,28 @@ void free_envelope(Envelope* e) {
   free(e);
 }
 
+
+/* Returns the duration of an envelope, in seconds
+*/
+double envelope_duration(Envelope* e) {
+  return e -> A + e -> D + e -> S + e -> R;
+}
+
+
+/* Allocates memory for a new Envelope, then copies all attributes of the
+   argument envelope to the new object.
+*/
+Envelope* envelope_copy(Envelope* e) {
+
+  Envelope* new = (Envelope*)malloc(sizeof(Envelope));
+  new -> A = e -> A;
+  new -> D = e -> D;
+  new -> S = e -> S;
+  new -> R = e -> R;
+  new -> sustain_amp = e -> sustain_amp;
+
+}
+
 /* Gets the value of an envelope object at time t
 */
 uint8_t get_env_val(Envelope* e, double t) {
@@ -66,7 +88,7 @@ uint8_t get_env_val(Envelope* e, double t) {
   }
 
   // Release behavior
-  else if (i >= (A + D + S) * rate) {
+  else if (i >= (A + D + S) * rate && i <= (A + D + S + R) * rate) {
     prop_through = 1.0 * (i - (A + D + S) * rate) / (R * rate);
     return (uint8_t)(sustain_amp * (1.0 - prop_through));
   }
