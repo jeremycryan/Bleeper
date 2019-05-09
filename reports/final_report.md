@@ -39,7 +39,7 @@ As when I started the project, I don't plan on using any outside libraries that 
 
 For this project, I opted to use a single header file with several C files. Each C file, for the most part, was fairly straightforward and had a reasonable number of function definitions, so I decided it would just make the process more tedious to have five separate header files.
 
-[Code hierarchy image]
+![Image of Code Hierarchy](https://raw.githubusercontent.com/jeremycryan/Bleeper/master/images/hierarchy.png)
 
 ### Data Structures
 
@@ -61,7 +61,7 @@ Between these structures, I am able to generate tones at arbitrary frequency and
 
 One notably missing aspect of my Arduino synthesizer is the hardware. I did actually set up the hardware and get some sounds playing (you can see the ```arduino_synth``` branch on this repository to look over the code). However, there were some physical restrictions of the platform, coupled with my own learning goals, that eventually made me go back to a desktop script.
 
-[arduino setup image]
+![Image of Arduino Setup](https://raw.githubusercontent.com/jeremycryan/Bleeper/master/images/arduino_setup.jpg)
 
 ### Sample Rate
 
